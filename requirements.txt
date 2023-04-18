@@ -1,0 +1,9 @@
+pandas
+numpy
+flask
+seaborn
+requests
+sklearn
+dill
+pickle
+#-e .
