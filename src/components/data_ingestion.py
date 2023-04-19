@@ -6,6 +6,7 @@ import sys
 from src.logger import logging
 from src.exception import CustomException
 from dataclasses import dataclass
+from src.utils import preprocess_dataset
 
 from src.components.data_transformation import DataTransformation
 from src.components.model_trainer import ModelTrainer
@@ -27,8 +28,14 @@ class DataIngestion:
         try:
             logging.info("Started data ingestion")
 
-            df = pd.read_csv(os.path.join('notebooks/data','gemstone.csv'))
+            df = pd.read_csv(os.path.join('notebooks/data','rawdata.csv'))
             logging.info("Dataset read")
+
+            logging.info('Running the required preprocessing on the dataset')
+            
+            df= preprocess_dataset(df)
+
+            logging.info('Dataset finished with preprocessing')
 
             os.makedirs(os.path.dirname(self.data_ingestion_config.raw_data_path),exist_ok=True)
 

@@ -18,9 +18,13 @@ def get_requirements(filepath:str)->List[str]:
 
     
     return requirements
+    
+
+
+
 
 setup(
-    name = 'Logreg_CensusIncome',
+    name = 'Regressorproject',
     version='0.0.1',
     author='karthik polisetty',
     author_email='kpolisetty1524@gmail.com',

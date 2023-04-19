@@ -2,7 +2,8 @@ import os
 import sys
 from src.logger import logging
 from src.exception import CustomException
-from sklearn.preprocessing import OrdinalEncoder,StandardScaler
+from sklearn.preprocessing import OrdinalEncoder,StandardScaler,OneHotEncoder
+from category_encoders.count import CountEncoder
 from sklearn.impute import SimpleImputer
 from sklearn.pipeline import Pipeline
 from sklearn.compose import ColumnTransformer
@@ -25,16 +26,20 @@ class DataTransformation:
     def get_data_transformation_object(self):
         try:
             logging.info("Getting data transformation object")
-            categorical_columns = ['cut', 'color','clarity']
-            numerical_columns = ['carat', 'depth','table', 'x', 'y', 'z']
+            numerical_columns = ['age', 'final_weight', 'capital-gain', 'capital-loss', 'hours-per-week']
+            count_enc_columns = ['workclass','marital_status','occupation','relationship','race','sex','native-country']
+            ordinal_columns = ['education']
 
             logging.info(f"numerical columns are {numerical_columns}")
-            logging.info(f"categorical columns are {categorical_columns}")
+            logging.info(f"one hot encoding columns are {count_enc_columns}")
+            logging.info(f"ordinal encoding columns are {ordinal_columns}")
+            
+            edu_categories = ['Preschool','1st-4th','5th-6th','7th-8th','9th','10th','11th','12th',
+                             'HS-grad','Some-college','Assoc-voc','Assoc-acdm','Bachelors',
+                             'Masters','Prof-school','Doctorate']
+            
 
-            cut_categories = ['Fair', 'Good', 'Very Good','Premium','Ideal']
-            color_categories = ['D', 'E', 'F', 'G', 'H', 'I', 'J']
-            clarity_categories = ['I1','SI2','SI1','VS2','VS1','VVS2','VVS1','IF']
-
+            
             num_pipeline = Pipeline(
                 steps=[
                 ('imputer',SimpleImputer(strategy='median')),
@@ -42,18 +47,30 @@ class DataTransformation:
                 ]
             )
 
-            cat_pipeline = Pipeline(
-                steps=[
-                ('imputer',SimpleImputer(strategy='most_frequent')),
-                ('ordinalencoder',OrdinalEncoder(categories=[cut_categories,color_categories,clarity_categories])),
+            ordinal_pipeline = Pipeline(
+                steps =[
+                ('imputer',SimpleImputer(strategy="most_frequent")),
+                ('ordinal',OrdinalEncoder(categories=[edu_categories])),
                 ('scaler',StandardScaler())
+                ])
+            
+            cat_encoding_pipeline = Pipeline(
+                steps=[
+                ('imputer',SimpleImputer(strategy="most_frequent")),
+                ('countEncoder',CountEncoder()),
+                ('scaler',StandardScaler())]
+            )
+            
+
+            preprocessor = ColumnTransformer(
+                [
+                ("num_pipeline",num_pipeline,numerical_columns),
+                ("ordinal_pipeline",ordinal_pipeline,ordinal_columns),
+                ("cat_encoding_pipeline",cat_encoding_pipeline,count_enc_columns)
+
                 ]
             )
 
-            preprocessor = ColumnTransformer([
-                ('num_pipeline',num_pipeline,numerical_columns),
-                ('cat_pipeline',cat_pipeline,categorical_columns)
-            ])
             logging.info('preprocessor object is prepared and returned')
 
             return preprocessor
@@ -79,8 +96,8 @@ class DataTransformation:
 
             preprocessing_obj = self.get_data_transformation_object()
 
-            target_column = 'price'
-            drop_columns = [target_column,'id']
+            target_column = 'class'
+            drop_columns = [target_column]
 
             logging.info('creating train and test df X,Y to fit and tranform later')
 
@@ -91,6 +108,7 @@ class DataTransformation:
             target_feature_test_df=test_df[target_column]
 
             logging.info("created input and target features test and train datframes")
+            
 
             ## Transforming using preprocessor obj
             input_feature_train_arr = preprocessing_obj.fit_transform(input_feature_train_df)

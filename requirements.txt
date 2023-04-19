@@ -1,9 +1,11 @@
 pandas
+setuptools
 numpy
 flask
 seaborn
 requests
-sklearn
 dill
-pickle
+#pickle
+scikit-learn
+category_encoders
 #-e .

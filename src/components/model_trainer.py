@@ -4,9 +4,10 @@ import os
 import sys
 from src.logger import logging
 from src.exception import CustomException
-from sklearn.metrics import r2_score,mean_absolute_error,mean_squared_error
+from sklearn.metrics import accuracy_score,confusion_matrix
+from sklearn.tree import DecisionTreeClassifier
 from dataclasses import dataclass
-from sklearn.linear_model import LinearRegression,Lasso,Ridge,ElasticNet
+from sklearn.linear_model import LogisticRegression
 from src.utils import save_object,load_object,evaluate_model
 
 @dataclass
@@ -28,10 +29,8 @@ class ModelTrainer:
             y_test = test_arr[:,-1]
 
             models = {
-                'Linear Regression': LinearRegression(),
-                'Lasso': Lasso(),
-                'Ridge': Ridge(),
-                'Elastic Net' : ElasticNet()
+                'Logistic Regression' : LogisticRegression(),
+                'Decision Tree' : DecisionTreeClassifier(),
             }
 
             model_report,trained_models = evaluate_model(X_train = X_train,X_test = X_test, y_train= y_train,y_test =  y_test,models = models)
@@ -55,9 +54,9 @@ class ModelTrainer:
 
             # print(f"this is trial score {r2_score(y_test,yar)}")
             ####################################################################################################
-            print(f'Best Model Found , Model Name : {best_model_name} , R2 Score : {best_model_score}')
+            print(f'Best Model Found , Model Name : {best_model_name} , accuracy score : {best_model_score}')
             print('\n====================================================================================\n')
-            logging.info(f'Best Model Found , Model Name : {best_model_name} , R2 Score : {best_model_score}')
+            logging.info(f'Best Model Found , Model Name : {best_model_name} , accuracy score : {best_model_score}')
 
             save_object(
                  filepath=self.model_trainer_config.trained_model_file_path,
