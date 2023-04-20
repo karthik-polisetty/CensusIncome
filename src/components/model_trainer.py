@@ -30,7 +30,6 @@ class ModelTrainer:
 
             models = {
                 'Logistic Regression' : LogisticRegression(),
-                'Decision Tree' : DecisionTreeClassifier(),
             }
 
             model_report,trained_models = evaluate_model(X_train = X_train,X_test = X_test, y_train= y_train,y_test =  y_test,models = models)
