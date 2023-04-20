@@ -15,6 +15,7 @@ from src.components.model_trainer import ModelTrainer
 
 @dataclass
 class DataIngestionConfig:
+    #We are generating data paths for all the types
     train_data_path:str = os.path.join('artifacts','train.csv')
     test_data_path:str = os.path.join('artifacts','test.csv')
     raw_data_path:str = os.path.join('artifacts','raw.csv')
@@ -33,10 +34,12 @@ class DataIngestion:
 
             logging.info('Running the required preprocessing on the dataset')
             
+            # Preprocessing the dataset based on inputs from EDA so that column transform wont be a problem
             df= preprocess_dataset(df)
 
             logging.info('Dataset finished with preprocessing')
 
+            # making the artifacts directory if doesnot exist
             os.makedirs(os.path.dirname(self.data_ingestion_config.raw_data_path),exist_ok=True)
 
             df.to_csv(self.data_ingestion_config.raw_data_path,index=False)

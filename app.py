@@ -41,7 +41,7 @@ def predict_datapoint():
         pred_value = predict_pipeline.predict(data)
 
         result = pred_value[0]
-        return render_template('results.html',final_result = result)
+        return render_template('form.html',final_result = result)
 
 
 
