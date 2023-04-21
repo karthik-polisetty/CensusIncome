@@ -39,7 +39,7 @@ class DataTransformation:
                              'Masters','Prof-school','Doctorate']
             
 
-            
+            # createing a pipeline for different types of columns and encoding required for them
             num_pipeline = Pipeline(
                 steps=[
                 ('imputer',SimpleImputer(strategy='median')),
@@ -85,6 +85,7 @@ class DataTransformation:
         
     def initiate_data_transformation(self,train_path,test_path):
         try:
+            # reading the train and test datasets from the paths read from return of initiate_data_ingestion function
             train_df = pd.read_csv(train_path)
             test_df = pd.read_csv(test_path)
 
@@ -96,6 +97,7 @@ class DataTransformation:
 
             preprocessing_obj = self.get_data_transformation_object()
 
+            # removing the target column from the main train and test datsets
             target_column = 'class'
             drop_columns = [target_column]
 
@@ -114,9 +116,11 @@ class DataTransformation:
             input_feature_train_arr = preprocessing_obj.fit_transform(input_feature_train_df)
             input_feature_test_arr = preprocessing_obj.transform(input_feature_test_df)
 
+            # Concatinating the preprocessed arrays and they are returned by the function and so that they can be used in other module
             train_arr = np.c_[input_feature_train_arr,np.array(target_feature_train_df)]
             test_arr = np.c_[input_feature_test_arr,np.array(target_feature_test_df)]
-
+            
+            # saving the preprocessing object in its path, so it can be used during prediction pipeline
             save_object(
                 self.data_transformation_config.preprocessor_obj_file_path,
                 preprocessing_obj

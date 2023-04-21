@@ -5,8 +5,9 @@ from src.exception import CustomException
 import pandas as pd
 import numpy as np
 import pickle
-from sklearn.metrics import accuracy_score
+from sklearn.metrics import accuracy_score,roc_auc_score
 #import dill
+from sklearn.model_selection import GridSearchCV
 
 
 def save_object(filepath,object):
@@ -24,27 +25,33 @@ def save_object(filepath,object):
         logging.info("Error occurred while saving object")
         raise CustomException(e,sys)
 
-def evaluate_model(X_train,X_test,y_train,y_test,models):
+def evaluate_model(X_train,X_test,y_train,y_test,models,params):
     try:
         logging.info("model evaluation started")
         model_report = {}
         trained_models = []
         for i in range(len(models)):
+            model_name = list(models.keys())[i]
             model = list(models.values())[i]
+
+            gs = GridSearchCV(model,params)
+            gs.fit(X_train,y_train)
+            
+            model.set_params(**gs.best_params_)
 
             model.fit(X_train, y_train)
 
-            y_train_pred = model.predict(X_train)
+            #y_train_pred = model.predict(X_train)
             y_test_pred = model.predict(X_test)
-            trained_models.append(model)
+            
 
-            test_model_score = accuracy_score(y_test,y_test_pred)
+            test_model_scores = [accuracy_score(y_test,y_test_pred),roc_auc_score(y_test,model.predict_proba(X_test)[:,1])]
 
-            model_report[list(models.keys())[i]]= test_model_score
+            model_report[model_name]= test_model_scores
 
-            logging.info(f"{list(models.keys())[i]}= {test_model_score}")
+            logging.info(f"{model_name}= {test_model_scores}")
         logging.info("model evaluation finished")
-        return (model_report,trained_models)
+        return model_report
     except Exception as e:
         logging.error(e)
         logging.info("Error occured while evaluating models")

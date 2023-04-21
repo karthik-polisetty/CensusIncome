@@ -32,30 +32,27 @@ class ModelTrainer:
                 'Logistic Regression' : LogisticRegression(),
             }
 
-            model_report,trained_models = evaluate_model(X_train = X_train,X_test = X_test, y_train= y_train,y_test =  y_test,models = models)
+            hyperparams = {
+                "penalty": ["l1", "l2"],
+                "C": [0.001, 0.01, 0.1, 1, 10, 100],
+                "solver": ["newton-cg", "lbfgs", "liblinear", "sag", "saga"],
+                "max_iter": [100, 500, 1000]}
+
+
+            model_report = evaluate_model(X_train = X_train,X_test = X_test, y_train= y_train,y_test =  y_test,models = models,params = hyperparams)
 
             print(model_report)
-            print(trained_models)
+            
             print('\n====================================================================================\n')
             logging.info(f'Model Report : {model_report}')
 
             logging.info("model report generated")
 
-            best_model_score = max(sorted(model_report.values()))
-
-            best_model_name = list(models.keys())[list(model_report.values()).index(best_model_score)]
-
-            best_model = models[best_model_name]
-            ####################################################################################################
-            # best_model1 = trained_models[list(model_report.values()).index(best_model_score)]
+            best_model = models["Logistic Regression"]
             
-            # yar = best_model1.predict(X_test)
-
-            # print(f"this is trial score {r2_score(y_test,yar)}")
-            ####################################################################################################
-            print(f'Best Model Found , Model Name : {best_model_name} , accuracy score : {best_model_score}')
+            print(f'Model trained , Model Name : Logistic Regression , accuracy score : {list(model_report.values())[0][0]}, roc_auc_score: {list(model_report.values())[0][1]}')
             print('\n====================================================================================\n')
-            logging.info(f'Best Model Found , Model Name : {best_model_name} , accuracy score : {best_model_score}')
+            logging.info(f'Model trained , Model Name : Logistic Regression , accuracy score : {list(model_report.values())[0][0]}, roc_auc_score: {list(model_report.values())[0][1]}')
 
             save_object(
                  filepath=self.model_trainer_config.trained_model_file_path,

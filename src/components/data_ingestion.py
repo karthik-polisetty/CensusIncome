@@ -15,7 +15,7 @@ from src.components.model_trainer import ModelTrainer
 
 @dataclass
 class DataIngestionConfig:
-    #We are generating data paths for all the types
+    #We are generating paths for all the artifact files to be created
     train_data_path:str = os.path.join('artifacts','train.csv')
     test_data_path:str = os.path.join('artifacts','test.csv')
     raw_data_path:str = os.path.join('artifacts','raw.csv')
@@ -23,6 +23,7 @@ class DataIngestionConfig:
 
 class DataIngestion:
     def __init__(self):
+        # for accessing the dataingestionconfig inside this class, we create an instance
         self.data_ingestion_config = DataIngestionConfig()
 
     def initiate_data_ingestion(self):
@@ -34,7 +35,7 @@ class DataIngestion:
 
             logging.info('Running the required preprocessing on the dataset')
             
-            # Preprocessing the dataset based on inputs from EDA so that column transform wont be a problem
+            # Preprocessing the dataset based on inputs from EDA so that we keep the dataset ready for column transformations
             df= preprocess_dataset(df)
 
             logging.info('Dataset finished with preprocessing')
@@ -46,6 +47,7 @@ class DataIngestion:
 
             logging.info("raw data file created successfully")
 
+            # Splitting the dataset into train and test and saving them in respective csv paths created
             logging.info("Initializing train_test_split")
             train_df,test_df = train_test_split(df,test_size=0.3,random_state=42)
             logging.info("df splitted")
