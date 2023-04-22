@@ -28,8 +28,9 @@ class ModelTrainer:
             X_test = test_arr[:,0:-1]
             y_test = test_arr[:,-1]
 
+            
             models = {
-                'Logistic Regression' : LogisticRegression(),
+                'Logistic Regression' : LogisticRegression(class_weight='balanced'),
             }
 
             hyperparams = {
@@ -39,9 +40,10 @@ class ModelTrainer:
                 "max_iter": [100, 500, 1000]}
 
 
-            model_report = evaluate_model(X_train = X_train,X_test = X_test, y_train= y_train,y_test =  y_test,models = models,params = hyperparams)
+            model_report,cm= evaluate_model(X_train = X_train,X_test = X_test, y_train= y_train,y_test =  y_test,models = models,params = hyperparams)
 
             print(model_report)
+            print(f'confusion matrix: {cm}')
             
             print('\n====================================================================================\n')
             logging.info(f'Model Report : {model_report}')

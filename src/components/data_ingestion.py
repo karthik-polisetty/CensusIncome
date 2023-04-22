@@ -49,7 +49,7 @@ class DataIngestion:
 
             # Splitting the dataset into train and test and saving them in respective csv paths created
             logging.info("Initializing train_test_split")
-            train_df,test_df = train_test_split(df,test_size=0.3,random_state=42)
+            train_df,test_df = train_test_split(df,test_size=0.33,random_state=123)
             logging.info("df splitted")
 
             train_df.to_csv(self.data_ingestion_config.train_data_path,index=False,header=True)
