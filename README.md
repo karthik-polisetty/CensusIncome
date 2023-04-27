@@ -32,8 +32,24 @@ Final parameters after hyperparametertuning:
 accuracy_score  = 0.79
 roc_auc_score = 0.886
 
+confusion_matrix = array([[9699, 2548],
+                         [ 700, 3154]])
 
+TP = 9699
+FP = 2548
+FN = 700
+TN = 3154
 
+Here <=50k is Positive and >50k is Negative
+
+For Our dataset, False-Negatives should be decreased,
+If a person is falsely predicted that he belong to a >50k data group, He may receive less
+resources than what he should recieve actually, as he belongs to low income group.
+
+So We should try to reduce False-Negatives
+So recall will be our main performance metric.
+
+Recall = TP/(TP+FN) = 0.932
 
 
 
